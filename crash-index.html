@@ -372,7 +372,8 @@
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full">
-  <div class="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto"><!-- Header -->
+  <div class="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto">
+   <!-- Header -->
    <div class="border-b border-slate-700 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-6 py-4">
      <div class="flex items-center justify-between">
@@ -401,7 +402,8 @@
      </div>
     </div>
    </div><!-- Main Game Area -->
-   <div class="max-w-7xl mx-auto px-6 py-8"><!-- Opponent Scores -->
+   <div class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Opponent Scores -->
     <div class="grid grid-cols-3 gap-4 mb-8">
      <div class="opponent-hand">
       <div class="flex items-center justify-between mb-3">
@@ -439,15 +441,18 @@
     </div><!-- Your Hand Organization -->
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg p-6 mb-8" id="hand-organization">
      <h2 class="text-white text-lg font-bold mb-4">Your 13 Cards - Organize Into 4 Hands</h2>
-     <div class="grid grid-cols-2 gap-8"><!-- Left Side - Available Cards -->
+     <div class="grid grid-cols-2 gap-8">
+      <!-- Left Side - Available Cards -->
       <div>
        <h3 class="text-slate-300 text-sm font-semibold mb-3">Available Cards</h3>
        <div class="bg-slate-700/30 border border-slate-600 rounded-lg p-4">
-        <div id="player-hand" class="flex flex-wrap gap-2 justify-center"><!-- Cards will be generated here -->
+        <div id="player-hand" class="flex flex-wrap gap-2 justify-center">
+         <!-- Cards will be generated here -->
         </div>
        </div>
       </div><!-- Right Side - Organization Areas -->
-      <div class="space-y-4"><!-- Hands 1-4 -->
+      <div class="space-y-4">
+       <!-- Hands 1-4 -->
        <div class="grid grid-cols-2 gap-4">
         <div>
          <h3 class="text-slate-300 text-sm font-semibold mb-2">1st Best Hand</h3>
@@ -502,7 +507,8 @@
        </div>
       </div>
      </div><!-- Buttons -->
-     <div class="mt-8 text-center flex gap-4 justify-center"><button id="start-btn" disabled class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"> Start Game </button> <button id="go-crash-btn" disabled class="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold rounded-lg hover:from-red-700 hover:to-red-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"> Go Crash! </button>
+     <div class="mt-8 text-center flex gap-4 justify-center">
+      <button id="start-btn" disabled class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"> Start Game </button> <button id="go-crash-btn" disabled class="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold rounded-lg hover:from-red-700 hover:to-red-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"> Go Crash! </button>
      </div>
     </div>
    </div><!-- Round Play Display -->
@@ -512,8 +518,7 @@
       <h2 class="text-3xl font-bold text-white mb-2" id="round-title">Round 1</h2>
       <p class="text-slate-400">Each player's current hand</p>
      </div>
-     <div class="grid grid-cols-2 gap-8 mb-12">
-      <!-- Player Hands -->
+     <div class="grid grid-cols-2 gap-8 mb-12"><!-- Player Hands -->
       <div class="bg-slate-700/30 border border-slate-600 rounded-lg p-6">
        <h3 class="text-white font-bold text-lg mb-4">You</h3>
        <div class="flex justify-center gap-3 mb-4" id="round-player-hand"></div>
@@ -608,8 +613,7 @@
        </div>
       </div>
      </div><!-- Continue Button -->
-     <div class="text-center">
-      <button id="continue-round-btn" class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold rounded-lg hover:from-green-700 hover:to-green-800 transition-all">Continue to Next Hand</button>
+     <div class="text-center"><button id="continue-round-btn" class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold rounded-lg hover:from-green-700 hover:to-green-800 transition-all">Continue to Next Hand</button>
      </div>
     </div>
    </div><!-- Round Results Modal -->
@@ -706,7 +710,75 @@
         div.classList.remove('dragging');
       });
 
+      // Mobile tap handler
+      div.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+          e.stopPropagation();
+          showCardPlacementOptions(card, idx);
+        }
+      });
+
       return div;
+    }
+
+    function showCardPlacementOptions(card, idx) {
+      // Create modal with placement options
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4';
+      modal.innerHTML = `
+        <div class="bg-slate-800 border-2 border-blue-400 rounded-lg p-6 max-w-sm w-full">
+          <h3 class="text-white font-bold text-lg mb-4">Place ${card.rank}${card.suit}</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <button class="placement-btn px-4 py-3 bg-blue-600 text-white rounded font-bold hover:bg-blue-700" data-hand="1">1st Hand</button>
+            <button class="placement-btn px-4 py-3 bg-blue-600 text-white rounded font-bold hover:bg-blue-700" data-hand="2">2nd Hand</button>
+            <button class="placement-btn px-4 py-3 bg-blue-600 text-white rounded font-bold hover:bg-blue-700" data-hand="3">3rd Hand</button>
+            <button class="placement-btn px-4 py-3 bg-blue-600 text-white rounded font-bold hover:bg-blue-700" data-hand="4">4th Hand</button>
+            <button class="placement-btn px-4 py-3 bg-red-600 text-white rounded font-bold hover:bg-red-700 col-span-2" data-hand="discard">Discard Pile</button>
+            <button class="placement-btn px-4 py-3 bg-slate-600 text-white rounded font-bold hover:bg-slate-700 col-span-2" onclick="this.closest('.fixed').remove()">Cancel</button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(modal);
+
+      // Add event listeners to placement buttons
+      modal.querySelectorAll('.placement-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const hand = e.target.dataset.hand;
+          if (!hand) return;
+
+          const card_obj = gameState.allPlayerCards[idx];
+          
+          // Remove card from wherever it currently is
+          for (let i = 0; i < gameState.playerHands.length; i++) {
+            const cardIdx = gameState.playerHands[i].findIndex(c => cardToKey(c) === cardToKey(card_obj));
+            if (cardIdx !== -1) {
+              gameState.playerHands[i].splice(cardIdx, 1);
+            }
+          }
+          
+          const discardIdx = gameState.playerDiscard.findIndex(c => cardToKey(c) === cardToKey(card_obj));
+          if (discardIdx !== -1) {
+            gameState.playerDiscard.splice(discardIdx, 1);
+          }
+          
+          // Add card to new location
+          if (hand === 'discard') {
+            if (gameState.playerDiscard.length < 1) {
+              gameState.playerDiscard = [card_obj];
+            }
+          } else {
+            const handNum = parseInt(hand) - 1;
+            if (gameState.playerHands[handNum].length < 3) {
+              gameState.playerHands[handNum].push(card_obj);
+            }
+          }
+          
+          updateHandUI();
+          checkStartButtonStatus();
+          modal.remove();
+        });
+      });
     }
 
     // Drag and drop functionality
@@ -1287,5 +1359,5 @@
       return false;
     }
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fbaadb444f99538',t:'MTc3ODc2OTg0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fbab29c919a6545',t:'MTc3ODc3MDA0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
