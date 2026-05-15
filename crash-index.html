@@ -372,7 +372,8 @@
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full">
-  <div class="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto"><!-- Header -->
+  <div class="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto">
+   <!-- Header -->
    <div class="border-b border-slate-700 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-6 py-4">
      <div class="flex items-center justify-between">
@@ -401,7 +402,8 @@
      </div>
     </div>
    </div><!-- Main Game Area -->
-   <div class="max-w-7xl mx-auto px-6 py-8"><!-- Opponent Scores -->
+   <div class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Opponent Scores -->
     <div class="grid grid-cols-3 gap-4 mb-8">
      <div class="opponent-hand">
       <div class="flex items-center justify-between mb-3">
@@ -439,15 +441,18 @@
     </div><!-- Your Hand Organization -->
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg p-6 mb-8" id="hand-organization">
      <h2 class="text-white text-lg font-bold mb-4">Your 13 Cards - Organize Into 4 Hands</h2>
-     <div class="grid grid-cols-2 gap-8"><!-- Left Side - Available Cards -->
+     <div class="grid grid-cols-2 gap-8">
+      <!-- Left Side - Available Cards -->
       <div>
        <h3 class="text-slate-300 text-sm font-semibold mb-3">Available Cards</h3>
        <div class="bg-slate-700/30 border border-slate-600 rounded-lg p-4">
-        <div id="player-hand" class="flex flex-wrap gap-2 justify-center"><!-- Cards will be generated here -->
+        <div id="player-hand" class="flex flex-wrap gap-2 justify-center">
+         <!-- Cards will be generated here -->
         </div>
        </div>
       </div><!-- Right Side - Organization Areas -->
-      <div class="space-y-4"><!-- Hands 1-4 -->
+      <div class="space-y-4">
+       <!-- Hands 1-4 -->
        <div class="grid grid-cols-2 gap-4">
         <div>
          <h3 class="text-slate-300 text-sm font-semibold mb-2">1st Best Hand</h3>
@@ -502,7 +507,8 @@
        </div>
       </div>
      </div><!-- Buttons -->
-     <div class="mt-8 text-center flex gap-4 justify-center"><button id="start-btn" disabled class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"> Start Game </button> <button id="go-crash-btn" disabled class="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold rounded-lg hover:from-red-700 hover:to-red-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"> Go Crash! </button>
+     <div class="mt-8 text-center flex gap-4 justify-center">
+      <button id="start-btn" disabled class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"> Start Game </button> <button id="go-crash-btn" disabled class="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold rounded-lg hover:from-red-700 hover:to-red-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"> Go Crash! </button>
      </div>
     </div>
    </div><!-- Round Play Display -->
@@ -512,8 +518,7 @@
       <h2 class="text-3xl font-bold text-white mb-2" id="round-title">Round 1</h2>
       <p class="text-slate-400">Each player's current hand</p>
      </div>
-     <div class="grid grid-cols-2 gap-8 mb-12">
-      <!-- Player Hands -->
+     <div class="grid grid-cols-2 gap-8 mb-12"><!-- Player Hands -->
       <div class="bg-slate-700/30 border border-slate-600 rounded-lg p-6">
        <h3 class="text-white font-bold text-lg mb-4">You</h3>
        <div class="flex justify-center gap-3 mb-4" id="round-player-hand"></div>
@@ -608,8 +613,7 @@
        </div>
       </div>
      </div><!-- Continue Button -->
-     <div class="text-center">
-      <button id="continue-round-btn" class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold rounded-lg hover:from-green-700 hover:to-green-800 transition-all">Continue to Next Hand</button>
+     <div class="text-center"><button id="continue-round-btn" class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold rounded-lg hover:from-green-700 hover:to-green-800 transition-all">Continue to Next Hand</button>
      </div>
     </div>
    </div><!-- Round Results Modal -->
@@ -1342,52 +1346,9 @@
         }
         
         // Check for Full Boat bonus (all 4 same cards played across 4 hands)
+        // This will show a modal and handle continuation internally
         checkForFullBoat();
         
-        // Deal completely fresh cards for next deal
-        document.getElementById('round-play-area').classList.add('hidden');
-        document.getElementById('hand-organization').classList.remove('hidden');
-        
-        // Increment deal number
-        gameState.currentDeal++;
-        gameState.currentHandInDeal = 0;
-        gameState.playerGoingCrash = false;
-        gameState.dealWinsCount = 0;
-        
-        // Create and shuffle a completely new deck
-        const newDeck = createDeck();
-        const newShuffled = shuffleDeck(newDeck);
-        
-        // Deal 13 fresh cards to each player
-        gameState.playerHands = [[], [], [], []];
-        gameState.playerDiscard = [];
-        gameState.allPlayerCards = newShuffled.slice(0, 13);
-        
-        // Get raw opponent cards for this deal
-        const oppCards1 = newShuffled.slice(13, 26);
-        const oppCards2 = newShuffled.slice(26, 39);
-        const oppCards3 = newShuffled.slice(39, 52);
-        
-        // Organize each opponent's 13 cards into 4 hands
-        const org1 = rankAndOrganizeHands(oppCards1);
-        const org2 = rankAndOrganizeHands(oppCards2);
-        const org3 = rankAndOrganizeHands(oppCards3);
-        
-        // Store organized hands - these are arrays of 4 hands each
-        gameState.opponentHands[0] = org1;
-        gameState.opponentHands[1] = org2;
-        gameState.opponentHands[2] = org3;
-        
-        console.log('Deal ' + gameState.currentDeal + ' opponent hands organized:');
-        console.log('Opp 1:', gameState.opponentHands[0]);
-        console.log('Opp 2:', gameState.opponentHands[1]);
-        console.log('Opp 3:', gameState.opponentHands[2]);
-        
-        renderPlayerCards();
-        updateHandUI();
-        checkStartButtonStatus();
-        document.getElementById('start-btn').disabled = false;
-        document.getElementById('start-btn').textContent = 'Start Hand';
         return;
       }
 
@@ -1442,12 +1403,73 @@
         if (rankCount[rank] === 4) {
           // Full boat! Award bonus point
           gameState.playerPoints += 1;
+          updateScores();
           
-          // Show bonus notification
-          const modal = document.getElementById('game-over-modal');
-          document.getElementById('game-over-title').textContent = '🚤 Full Boat Bonus!';
-          document.getElementById('game-over-content').textContent = `You played all 4 ${rank}s across your 4 hands! +1 bonus point!`;
-          modal.classList.remove('hidden');
+          // Show bonus notification in a custom overlay (not game-over-modal which triggers reset)
+          const overlay = document.createElement('div');
+          overlay.className = 'game-over-modal';
+          overlay.style.position = 'fixed';
+          overlay.style.inset = '0';
+          overlay.style.background = 'rgba(0, 0, 0, 0.8)';
+          overlay.style.display = 'flex';
+          overlay.style.alignItems = 'center';
+          overlay.style.justifyContent = 'center';
+          overlay.style.zIndex = '1000';
+          overlay.style.backdropFilter = 'blur(4px)';
+          
+          const content = document.createElement('div');
+          content.className = 'modal-content';
+          content.style.background = 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)';
+          content.style.border = '2px solid #f39c12';
+          content.style.borderRadius = '16px';
+          content.style.padding = '40px';
+          content.style.textAlign = 'center';
+          content.style.color = 'white';
+          content.style.maxWidth = '500px';
+          
+          const title = document.createElement('h2');
+          title.textContent = '🚤 Full Boat Bonus!';
+          title.style.fontSize = '40px';
+          title.style.marginBottom = '20px';
+          title.style.color = '#f39c12';
+          
+          const message = document.createElement('div');
+          message.textContent = `You played all 4 ${rank}s across your 4 hands! +1 bonus point!`;
+          message.style.marginBottom = '24px';
+          message.style.fontSize = '18px';
+          
+          const button = document.createElement('button');
+          button.textContent = 'Continue';
+          button.style.padding = '12px 24px';
+          button.style.backgroundColor = '#2563eb';
+          button.style.color = 'white';
+          button.style.border = 'none';
+          button.style.borderRadius = '8px';
+          button.style.fontWeight = 'bold';
+          button.style.fontSize = '16px';
+          button.style.cursor = 'pointer';
+          button.style.transition = 'all 0.3s ease';
+          
+          button.onmouseenter = () => {
+            button.style.backgroundColor = '#1d4ed8';
+            button.style.transform = 'translateY(-2px)';
+          };
+          button.onmouseleave = () => {
+            button.style.backgroundColor = '#2563eb';
+            button.style.transform = 'translateY(0)';
+          };
+          
+          button.onclick = () => {
+            overlay.remove();
+            // Continue to next deal
+            continueToNextDeal();
+          };
+          
+          content.appendChild(title);
+          content.appendChild(message);
+          content.appendChild(button);
+          overlay.appendChild(content);
+          document.body.appendChild(overlay);
           
           return true;
         }
@@ -1455,6 +1477,67 @@
       
       return false;
     }
+
+    function continueToNextDeal() {
+      // Check if game is over
+      if (gameState.playerPoints >= 15) {
+        gameState.gameOver = true;
+        showGameOver('You Win!', `Congratulations! You reached 15 points!`);
+        return;
+      }
+
+      if (gameState.opponentPoints.some(p => p >= 15)) {
+        const oppNum = gameState.opponentPoints.indexOf(Math.max(...gameState.opponentPoints)) + 1;
+        gameState.gameOver = true;
+        showGameOver('Game Over', `Opponent ${oppNum} reached 15 points first.`);
+        return;
+      }
+
+      // Deal completely fresh cards for next deal
+      document.getElementById('round-play-area').classList.add('hidden');
+      document.getElementById('hand-organization').classList.remove('hidden');
+      
+      // Increment deal number
+      gameState.currentDeal++;
+      gameState.currentHandInDeal = 0;
+      gameState.playerGoingCrash = false;
+      gameState.dealWinsCount = 0;
+      
+      // Create and shuffle a completely new deck
+      const newDeck = createDeck();
+      const newShuffled = shuffleDeck(newDeck);
+      
+      // Deal 13 fresh cards to each player
+      gameState.playerHands = [[], [], [], []];
+      gameState.playerDiscard = [];
+      gameState.allPlayerCards = newShuffled.slice(0, 13);
+      
+      // Get raw opponent cards for this deal
+      const oppCards1 = newShuffled.slice(13, 26);
+      const oppCards2 = newShuffled.slice(26, 39);
+      const oppCards3 = newShuffled.slice(39, 52);
+      
+      // Organize each opponent's 13 cards into 4 hands
+      const org1 = rankAndOrganizeHands(oppCards1);
+      const org2 = rankAndOrganizeHands(oppCards2);
+      const org3 = rankAndOrganizeHands(oppCards3);
+      
+      // Store organized hands - these are arrays of 4 hands each
+      gameState.opponentHands[0] = org1;
+      gameState.opponentHands[1] = org2;
+      gameState.opponentHands[2] = org3;
+      
+      console.log('Deal ' + gameState.currentDeal + ' opponent hands organized:');
+      console.log('Opp 1:', gameState.opponentHands[0]);
+      console.log('Opp 2:', gameState.opponentHands[1]);
+      console.log('Opp 3:', gameState.opponentHands[2]);
+      
+      renderPlayerCards();
+      updateHandUI();
+      checkStartButtonStatus();
+      document.getElementById('start-btn').disabled = false;
+      document.getElementById('start-btn').textContent = 'Start Hand';
+    }
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fc281463560632e',t:'MTc3ODg1MTkwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fc296ace1fa887a',t:'MTc3ODg1Mjc4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
