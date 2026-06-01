@@ -370,10 +370,9 @@
   </style>
   <style>body { box-sizing: border-box; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
- </head>
+ <script src="/_sdk/telemetry_sdk.js"></script></head>
  <body class="h-full">
-  <div class="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto">
-   <!-- Header -->
+  <div class="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto"><!-- Header -->
    <div class="border-b border-slate-700 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-6 py-4">
      <div class="flex items-center justify-between">
@@ -402,8 +401,7 @@
      </div>
     </div>
    </div><!-- Main Game Area -->
-   <div class="max-w-7xl mx-auto px-6 py-8">
-    <!-- Opponent Scores -->
+   <div class="max-w-7xl mx-auto px-6 py-8"><!-- Opponent Scores -->
     <div class="grid grid-cols-3 gap-4 mb-8">
      <div class="opponent-hand">
       <div class="flex items-center justify-between mb-3">
@@ -441,18 +439,15 @@
     </div><!-- Your Hand Organization -->
     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg p-6 mb-8" id="hand-organization">
      <h2 class="text-white text-lg font-bold mb-4">Your 13 Cards - Organize Into 4 Hands</h2>
-     <div class="grid grid-cols-2 gap-8">
-      <!-- Left Side - Available Cards -->
+     <div class="grid grid-cols-2 gap-8"><!-- Left Side - Available Cards -->
       <div>
        <h3 class="text-slate-300 text-sm font-semibold mb-3">Available Cards</h3>
        <div class="bg-slate-700/30 border border-slate-600 rounded-lg p-4">
-        <div id="player-hand" class="flex flex-wrap gap-2 justify-center">
-         <!-- Cards will be generated here -->
+        <div id="player-hand" class="flex flex-wrap gap-2 justify-center"><!-- Cards will be generated here -->
         </div>
        </div>
       </div><!-- Right Side - Organization Areas -->
-      <div class="space-y-4">
-       <!-- Hands 1-4 -->
+      <div class="space-y-4"><!-- Hands 1-4 -->
        <div class="grid grid-cols-2 gap-4">
         <div>
          <h3 class="text-slate-300 text-sm font-semibold mb-2">1st Best Hand</h3>
@@ -507,8 +502,7 @@
        </div>
       </div>
      </div><!-- Buttons -->
-     <div class="mt-8 text-center flex gap-4 justify-center">
-      <button id="start-btn" disabled class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"> Start Game </button> <button id="go-crash-btn" disabled class="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold rounded-lg hover:from-red-700 hover:to-red-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"> Go Crash! </button>
+     <div class="mt-8 text-center flex gap-4 justify-center"><button id="start-btn" disabled class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"> Start Game </button> <button id="go-crash-btn" disabled class="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold rounded-lg hover:from-red-700 hover:to-red-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"> Go Crash! </button>
      </div>
     </div>
    </div><!-- Round Play Display -->
@@ -518,7 +512,8 @@
       <h2 class="text-3xl font-bold text-white mb-2" id="round-title">Round 1</h2>
       <p class="text-slate-400">Each player's current hand</p>
      </div>
-     <div class="grid grid-cols-2 gap-8 mb-12"><!-- Player Hands -->
+     <div class="grid grid-cols-2 gap-8 mb-12">
+      <!-- Player Hands -->
       <div class="bg-slate-700/30 border border-slate-600 rounded-lg p-6">
        <h3 class="text-white font-bold text-lg mb-4">You</h3>
        <div class="flex justify-center gap-3 mb-4" id="round-player-hand"></div>
@@ -613,7 +608,8 @@
        </div>
       </div>
      </div><!-- Continue Button -->
-     <div class="text-center"><button id="continue-round-btn" class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold rounded-lg hover:from-green-700 hover:to-green-800 transition-all">Continue to Next Hand</button>
+     <div class="text-center">
+      <button id="continue-round-btn" class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold rounded-lg hover:from-green-700 hover:to-green-800 transition-all">Continue to Next Hand</button>
      </div>
     </div>
    </div><!-- Round Results Modal -->
@@ -1124,6 +1120,26 @@
           const maxValue = Math.max(...values);
           score += maxValue * 10;
         }
+      } else if (type === 'pair') {
+        // For pairs, rank by the pair value first, then kicker
+        const ranks = cards.map(c => c.rank);
+        const rankCounts = {};
+        ranks.forEach(r => rankCounts[r] = (rankCounts[r] || 0) + 1);
+        
+        // Find the paired rank
+        let pairRank = null;
+        let kickerRank = null;
+        for (const rank in rankCounts) {
+          if (rankCounts[rank] === 2) {
+            pairRank = rank;
+          } else {
+            kickerRank = rank;
+          }
+        }
+        
+        const pairValue = RANK_VALUES[pairRank] || 0;
+        const kickerValue = RANK_VALUES[kickerRank] || 0;
+        score += pairValue * 100 + kickerValue * 10;
       } else {
         // Add tie-breaker based on high cards for non-run hands
         const rankValues = cards.map(c => RANK_VALUES[c.rank]).sort((a, b) => b - a);
@@ -1311,7 +1327,9 @@
       document.getElementById('round-display-opp3-points').textContent = gameState.opponentPoints[2];
     }
 
-    document.getElementById('continue-round-btn').addEventListener('click', () => {
+    document.getElementById('continue-round-btn').addEventListener('click', continueNextHand);
+
+    function continueNextHand() {
       // Check if game is over
       if (gameState.playerPoints >= 15) {
         gameState.gameOver = true;
@@ -1347,14 +1365,17 @@
         
         // Check for Full Boat bonus (all 4 same cards played across 4 hands)
         // This will show a modal and handle continuation internally
-        checkForFullBoat();
+        if (!checkForFullBoat()) {
+          // Only continue to next deal if no full boat (full boat handles continuation internally)
+          continueToNextDeal();
+        }
         
         return;
       }
 
       // Play next hand in current deal
       playRound();
-    });
+    }
 
     document.getElementById('go-crash-btn').addEventListener('click', () => {
       gameState.playerGoingCrash = true;
@@ -1539,5 +1560,5 @@
       document.getElementById('start-btn').textContent = 'Start Hand';
     }
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fc296ace1fa887a',t:'MTc3ODg1Mjc4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a04e3c15799f3751',t:'MTc4MDMxNzA3OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
